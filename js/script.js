@@ -11,23 +11,33 @@ document.addEventListener("readystatechange", (event) => {
 
 const initApp = () => {
   processSubmission();
+  initiateClearButton();
 
+  loadListObject();
+  refreshPage();
+};
+
+const initiateClearButton = () => {
   const clearItems = document.getElementById("clearItems");
   clearItems.addEventListener("click", (event) => {
-    console.log("clicked");
+    let items = document.getElementsByClassName("item");
+
+    Array.from(items).forEach(function (item) {
+      item.querySelector("input[type='checkbox']").checked = true;
+    });
+
     const list = toDoList.getList();
     if (list.length) {
       const confirmed = confirm("Are you sure you want to clear?");
       if (confirmed) {
         toDoList.clearList();
         updatePersistentData(toDoList.getList());
-        refreshPage();
+        setTimeout(() => {
+          refreshPage();
+        }, 500);
       }
     }
   });
-
-  loadListObject();
-  refreshPage();
 };
 
 const loadListObject = () => {
