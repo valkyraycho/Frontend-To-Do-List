@@ -10,12 +10,14 @@ document.addEventListener("readystatechange", (event) => {
 });
 
 const initApp = () => {
-  const itemEntryForm = document.getElementById("itemEntryForm");
-  itemEntryForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    processSubmission();
-  });
+  processSubmission();
+  initiateClearButton();
 
+  loadListObject();
+  refreshPage();
+};
+
+const initiateClearButton = () => {
   const clearItems = document.getElementById("clearItems");
   clearItems.addEventListener("click", (event) => {
     let items = document.getElementsByClassName("item");
@@ -25,16 +27,17 @@ const initApp = () => {
     });
 
     const list = toDoList.getList();
-
-    toDoList.clearList();
-    updatePersistentData(toDoList.getList());
-    setTimeout(() => {
-      refreshPage();
-    }, 500);
+    if (list.length) {
+      const confirmed = confirm("Are you sure you want to clear?");
+      if (confirmed) {
+        toDoList.clearList();
+        updatePersistentData(toDoList.getList());
+        setTimeout(() => {
+          refreshPage();
+        }, 500);
+      }
+    }
   });
-
-  loadListObject();
-  refreshPage();
 };
 
 const loadListObject = () => {
@@ -118,14 +121,18 @@ const setFocusOnEntry = () => {
 };
 
 const processSubmission = () => {
-  const newEntry = document.getElementById("newItem").value.trim();
-  if (!newEntry.length) return;
-  const nextItemId = getNextItemId();
-  const toDoItem = createNewItem(nextItemId, newEntry);
-  toDoList.addItemToList(toDoItem);
-  updatePersistentData(toDoList.getList());
-  updateScreenReaderConfirmation(newEntry, "added");
-  refreshPage();
+  const itemEntryForm = document.getElementById("itemEntryForm");
+  itemEntryForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const newEntry = document.getElementById("newItem").value.trim();
+    if (!newEntry.length) return;
+    const nextItemId = getNextItemId();
+    const toDoItem = createNewItem(nextItemId, newEntry);
+    toDoList.addItemToList(toDoItem);
+    updatePersistentData(toDoList.getList());
+    updateScreenReaderConfirmation(newEntry, "added");
+    refreshPage();
+  });
 };
 
 const getNextItemId = () => {
