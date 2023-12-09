@@ -10,11 +10,7 @@ document.addEventListener("readystatechange", (event) => {
 });
 
 const initApp = () => {
-  const itemEntryForm = document.getElementById("itemEntryForm");
-  itemEntryForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    processSubmission();
-  });
+  processSubmission();
 
   const clearItems = document.getElementById("clearItems");
   clearItems.addEventListener("click", (event) => {
@@ -115,14 +111,18 @@ const setFocusOnEntry = () => {
 };
 
 const processSubmission = () => {
-  const newEntry = document.getElementById("newItem").value.trim();
-  if (!newEntry.length) return;
-  const nextItemId = getNextItemId();
-  const toDoItem = createNewItem(nextItemId, newEntry);
-  toDoList.addItemToList(toDoItem);
-  updatePersistentData(toDoList.getList());
-  updateScreenReaderConfirmation(newEntry, "added");
-  refreshPage();
+  const itemEntryForm = document.getElementById("itemEntryForm");
+  itemEntryForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const newEntry = document.getElementById("newItem").value.trim();
+    if (!newEntry.length) return;
+    const nextItemId = getNextItemId();
+    const toDoItem = createNewItem(nextItemId, newEntry);
+    toDoList.addItemToList(toDoItem);
+    updatePersistentData(toDoList.getList());
+    updateScreenReaderConfirmation(newEntry, "added");
+    refreshPage();
+  });
 };
 
 const getNextItemId = () => {
